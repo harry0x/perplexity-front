@@ -34,24 +34,64 @@ const Dashboard = () => {
   return (
     <main className="min-h-screen w-full bg-[#07090f] p-3 text-white md:p-5">
       <section className="mx-auto flex h-[calc(100vh-1.5rem)] w-full gap-4 rounded-3xl border   p-1 md:h-[calc(100vh-2.5rem)] md:gap-6 md:p-1 border-none">
-        <aside className="hidden h-full w-72 shrink-0 rounded-3xl border  bg-[#080b12] p-4 md:flex md:flex-col">
-          <h1 className="mb-5 text-3xl font-semibold tracking-tight">
-            Perplexity
-          </h1>
+        <aside className="hidden h-full w-72 shrink-0 flex-col rounded-3xl border border-white/10 bg-[#080b12] p-4 md:flex">
+          <div className="mb-6 flex items-center justify-between">
+            <h1 className="text-2xl font-bold tracking-tight text-white">
+              Perplexity
+            </h1>
+            <button
+              onClick={chat.handleNewChat}
+              className="group flex h-9 w-9 items-center justify-center rounded-full border border-white/20 transition hover:border-white/40 hover:bg-white/5"
+              title="New Chat"
+            >
+              <span className="text-xl font-light text-white/70 group-hover:text-white">
+                +
+              </span>
+            </button>
+          </div>
 
-          <div className="space-y-2">
-            {Object.values(chats).map((chat, index) => (
-              <button
-                onClick={() => {
-                  openChat(chat.id);
-                }}
-                key={index}
-                type="button"
-                className="w-full cursor-pointer rounded-xl border border-white/60 bg-transparent px-3 py-2 text-left text-base font-medium text-white/90 transition hover:border-white hover:text-white"
-              >
-                {chat.title}
-              </button>
-            ))}
+          <div className="flex-1 space-y-2 overflow-y-auto pr-2 scrollbar-thin">
+            {Object.values(chats)
+              .sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated))
+              .map((chatItem) => (
+                <div
+                  key={chatItem.id}
+                  className={`group flex items-center gap-2 rounded-xl border transition-all duration-200 ${
+                    currentChatId === chatItem.id
+                      ? "border-white/30 bg-white/10"
+                      : "border-transparent text-white/60 hover:bg-white/5"
+                  }`}
+                >
+                  <button
+                    onClick={() => openChat(chatItem.id)}
+                    className="flex-1 px-3 py-2.5 text-left text-sm font-medium transition-colors"
+                  >
+                    <span className="line-clamp-1">{chatItem.title}</span>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      chat.handleDeleteChat(chatItem.id);
+                    }}
+                    className="mr-2 hidden rounded-md p-1 transition-colors hover:bg-red-500/20 hover:text-red-400 group-hover:block"
+                    title="Delete Chat"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
           </div>
         </aside>
 
